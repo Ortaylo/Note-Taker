@@ -2,7 +2,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const app = express();
 // id Generator
 const uuid = () =>
@@ -49,7 +49,6 @@ app.post('/api/notes', (req,res) => {
         text,
         id: uuid()
     };
-    console.info(newNote)
 
     //Retrives notes data from db.json 
     fs.readFile('./db/db.json','utf8',(err,data) => {
@@ -69,7 +68,6 @@ app.post('/api/notes', (req,res) => {
                 }
             });
         } catch(err) {
-            console.info('newNote',newNote)
             const newNoteString = JSON.stringify(newNote);
             // Writing first note as an array
             fs.writeFile('./db/db.json', '['+newNoteString+']', (err) => {
