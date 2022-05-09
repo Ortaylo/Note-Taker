@@ -1,29 +1,32 @@
+// Inital setup
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const PORT = 3001;
 const app = express();
+// id Generator
 const uuid = () =>
 Math.floor((1 + Math.random()) * 0x10000)
   .toString(16)
   .substring(1);
 
+// basic app setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
+// GET request setting the homepage file
 app.get('/', (req,res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
 });
-
+// GET request setting the /notes page file
 app.get('/notes', (req,res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html' ))
 });
-
+// GET requset for the previous notes
 app.get('/api/notes', (req,res) => {
     console.log(`${req.method} successfull`)
-console.info('GET BODY',req.body)
     fs.readFile('./db/db.json','utf8', (err,data) => {
         if (err) {
             console.error(err)
@@ -38,7 +41,7 @@ console.info('GET BODY',req.body)
     
 
 });
-
+// POST request to save the new note
 app.post('/api/notes', (req,res) => {
     const {title,text} = req.body;
     const newNote = {
@@ -48,6 +51,7 @@ app.post('/api/notes', (req,res) => {
     };
     console.info(newNote)
 
+    //Retrives notes data from db.json 
     fs.readFile('./db/db.json','utf8',(err,data) => {
         if (err) {
             
@@ -56,6 +60,7 @@ app.post('/api/notes', (req,res) => {
             try{
             const parsedNotes = JSON.parse(data);
             parsedNotes.push(newNote);
+            // Writing new notes to db.json
             fs.writeFile('./db/db.json', JSON.stringify(parsedNotes), (err) => {
                 if (err) {
                     console.error(err);
@@ -66,6 +71,7 @@ app.post('/api/notes', (req,res) => {
         } catch(err) {
             console.info('newNote',newNote)
             const newNoteString = JSON.stringify(newNote);
+            // Writing first note as an array
             fs.writeFile('./db/db.json', '['+newNoteString+']', (err) => {
                 if (err) {
                     console.error(err);
@@ -77,17 +83,11 @@ app.post('/api/notes', (req,res) => {
         }
     });
     res.json(newNote);
-    console.info('body:',req.body);
-    console.info('newNote:',newNote);
     console.log(`${req.method} successfull`);
 
 });
-let id;
-app.delete(`/api/notes`, (req,res) => {
-    console.info`${req.method} Successfull`
-    console.info(req.body)
-})
 
+// Setting the app to listen
 app.listen(PORT, () => {
     console.log(`App listening at http://localhost:${PORT}`)
 });
