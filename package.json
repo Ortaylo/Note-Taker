@@ -13,6 +13,9 @@
     "express": "^4.16.4"
   },
   "engines": {
-    "node": "version"
+    "node": "13.1.0",
+    "npm": "6.12.1"
+
+    
   }
-  }
+}
