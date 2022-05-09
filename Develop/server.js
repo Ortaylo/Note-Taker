@@ -31,8 +31,12 @@ app.get('/api/notes', (req,res) => {
         if (err) {
             console.error(err)
         } else {
-        const notes = JSON.parse(data);
-        res.json(notes);
+       try { 
+           const notes = JSON.parse(data);
+            res.json(notes);
+       } catch(err) {
+           console.error(err)
+       }
         }
         
     })
